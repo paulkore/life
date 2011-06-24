@@ -44,6 +44,10 @@ var Game = function() {
     this.set.push(cell)    
   }
 
+  this.isAlive = function(cell) {
+    return existsInSet(this.set, cell);
+  }
+
   this.tick = function() {
     lastgen = this.set;
     this.set = [];
@@ -75,3 +79,20 @@ game.add(new Cell(3,2))
 game.add(new Cell(3,3))
 
 game.tick()
+
+
+setInterval(function() {
+  game.tick();
+  document.getElementsByTagName("body")[0].innerHTML = '';
+  for (var x = 0; x < 50; x++) {
+    for (var y = 0; y < 100; y++) {
+      var cell = new Cell(x,y);
+      var alive = game.isAlive(cell)
+      document.write( alive ? 'o' : '.')
+    }
+    document.write( '<br>')
+  }
+
+
+} ,500)
+
