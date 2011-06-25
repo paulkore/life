@@ -1,1 +1,34 @@
+
+
+<pre id="board">
+
+</pre>
+
 <script type="text/javascript" src="game.js"></script>
+<script type="text/javascript">
+
+game = new Game()
+game.add([1,2])
+game.add([2,3])
+game.add([3,1])
+game.add([3,2])
+game.add([3,3])
+game.tick()
+
+
+var board = document.getElementsByTagName("pre")[0];
+
+function draw() {
+  var s = ''
+  for (var x = 0; x < 30; x++) {
+    for (var y = 0; y < 100; y++) {
+      s += game.isAlive([x,y]) ? 'o' : '.';
+    }
+    s += "\n";
+  }
+  board.innerHTML = s;
+}
+
+setInterval(function() {  game.tick();  draw(); } , 500);
+
+</script>

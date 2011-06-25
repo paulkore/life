@@ -1,98 +1,52 @@
-var Cell = function(x,y) {
-  this.x = x;
-  this.y = y;
-
-  this.neighbours = function() {    
-    return [new Cell(x-1, y-1), new Cell(x-1, y), new Cell(x-1, y+1), new Cell(x, y-1), new Cell(x, y+1), new Cell(x+1, y-1), new Cell(x+1, y), new Cell(x+1, y+1)]   
-  }
-  this.coords = function() {
-    return x + "x" + y;
-  }
-}
-
 var Game = function() {
-  
-  this.set = [];
-
-  var existsInSet = function(set, cell) {
-    for (var i = set.length - 1; i >= 0; i--) {
-      if (set[i].x == cell.x && set[i].y == cell.y) {
-        return true
-      }
-    }; 
-    return false
-  }
+  this.set = {};
 
   var gamestateFromSet = function(set) {
     var gamestate = {};    
 
-    for (var i = set.length - 1; i >= 0; i--) {
-      set[i].neighbours().forEach(function(n) {
-        if (!gamestate[n.coords()])
-          gamestate[n.coords()] = [0, n]
-        gamestate[n.coords()][0] += 1        
+
+    for (var cell in set) {
+
+      var a = neighboursOf(cell);
+      a.forEach(function(n) {
+        if (!gamestate[n]) gamestate[n] = 0
+        gamestate[n] += 1        
       })
     };
 
     return gamestate;
   }
 
-  this.add = function(cell) {
-    if (existsInSet(this.set, cell))
-      return 
+  var neighboursOf = function(cell) {        
+    var cell = cell.split(','), x = parseInt(cell[0]), y = parseInt(cell[1]);
+    return [[x-1, y-1], [x-1, y], [x-1, y+1], [x, y-1], [x, y+1], [x+1, y-1], [x+1, y], [x+1, y+1]]   
+  }
 
-    this.set.push(cell)    
+  this.add = function(cell) {
+    this.set[cell] = true;
   }
 
   this.isAlive = function(cell) {
-    return existsInSet(this.set, cell);
+    return this.set[cell];
   }
 
   this.tick = function() {
-    lastgen = this.set;
-    this.set = [];
+    nextGen = {};    
 
-    var gamestate = gamestateFromSet(lastgen);
+    var gamestate = gamestateFromSet(this.set);
 
-    for (key in gamestate) {
-      var value = gamestate[key];
-      console.log(value);
-      var count = value[0];
-      var cell = value[1];
+    for (cell in gamestate) {      
 
-      if (count == 3) {
-        this.add(cell);
+      var count = gamestate[cell];      
+
+      if (count == 3) { 
+        nextGen[cell] = true;  
       }
-      else if (count == 2 && existsInSet(lastgen, cell)) {
-        this.add(cell);
-      }
+      else if (count == 2 && this.set[cell]) { 
+        nextGen[cell] = true; 
+      }      
     }
+
+    this.set = nextGen;
   }
 }
-
-game = new Game()
-
-game.add(new Cell(1,2))
-game.add(new Cell(2,3))
-game.add(new Cell(3,1))
-game.add(new Cell(3,2))
-game.add(new Cell(3,3))
-
-game.tick()
-
-
-setInterval(function() {
-  game.tick();
-  document.getElementsByTagName("body")[0].innerHTML = '';
-  for (var x = 0; x < 50; x++) {
-    for (var y = 0; y < 100; y++) {
-      var cell = new Cell(x,y);
-      var alive = game.isAlive(cell)
-      document.write( alive ? 'o' : '.')
-    }
-    document.write( '<br>')
-  }
-
-
-} ,500)
-
