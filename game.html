@@ -20,12 +20,18 @@ var board = document.getElementsByTagName("pre")[0];
 
 function draw() {
   var s = ''
-  for (var x = 0; x < 30; x++) {
-    for (var y = 0; y < 100; y++) {
-      s += game.isAlive([x,y]) ? 'o' : '.';
+  var max_x = 30;
+  var max_y = 100;
+  for (var x = 0; x < max_x; x++) {
+    for (var y = 0; y < max_y; y++) {
+      s += game.isAlive([x,y]) ? '0' : ' ';
     }
-    s += "\n";
+    s += "|\n";
   }
+  for (var y = 0; y <= max_y; y++) {
+	s += "=";
+  }
+  
   board.innerHTML = s;
 }
 
