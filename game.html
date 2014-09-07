@@ -1,5 +1,4 @@
 
-
 <pre id="board">
 
 </pre>
@@ -7,29 +6,66 @@
 <script type="text/javascript" src="game.js"></script>
 <script type="text/javascript">
 
-game = new Game()
-game.add([1,2])
-game.add([2,3])
-game.add([3,1])
-game.add([3,2])
-game.add([3,3])
-game.tick()
+var glider = [
+[0, 1, 0],
+[0, 0, 1],
+[1, 1, 1]
+];
 
+var lightweight_spaceship = [
+[0, 1, 0, 0, 1],
+[1, 0, 0, 0, 0],
+[1, 0, 0, 0, 1],
+[1, 1, 1, 1, 0],
+];
+
+var blinker = [
+[1, 1, 1]
+];
+
+var beacon = [
+[1, 1, 0, 0], 
+[1, 0, 0, 0],
+[0, 0, 0, 1],
+[0, 0, 1, 1],
+];
+
+game = new Game()
+
+game.addShape(glider, 5, 5);
+game.addShape(lightweight_spaceship, 20, 40);
+game.addShape(beacon, 5, 20);
+game.addShape(beacon, 20, 5);
+game.addShape(blinker, 10, 35);
+game.addShape(blinker, 14, 35);
+game.addShape(blinker, 18, 35);
+
+/*
+This is old code, where each cell of the shape is set directly:
+
+game.addCell([1,2])
+game.addCell([2,3])
+game.addCell([3,1])
+game.addCell([3,2])
+game.addCell([3,3])
+*/
+
+game.tick()
 
 var board = document.getElementsByTagName("pre")[0];
 
 function draw() {
   var s = ''
   var max_x = 30;
-  var max_y = 100;
+  var max_y = 50;
   for (var x = 0; x < max_x; x++) {
     for (var y = 0; y < max_y; y++) {
-      s += game.isAlive([x,y]) ? '0' : ' ';
+      s += game.isAlive([x,y]) ? '()' : '  ';
     }
-    s += "|\n";
+    s += "||\n";
   }
   for (var y = 0; y <= max_y; y++) {
-	s += "=";
+	s += "==";
   }
   
   board.innerHTML = s;
